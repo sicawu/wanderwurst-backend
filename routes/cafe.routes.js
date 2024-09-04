@@ -5,7 +5,7 @@ const Cafe = require("../models/Cafe.model.js")
 const { isAuthenticated } = require("../middleware/jwt.middleware.js")
 
 //POST - USER NEEDS TO BE LOGGED IN
-router.post("/cafes", isAuthenticated, (req, res, next) => {
+router.post("/cafes", /* isAuthenticated,*/ (req, res, next) => {
 
   console.log(req.body);
 
@@ -30,7 +30,7 @@ router.post("/cafes", isAuthenticated, (req, res, next) => {
 //READ - LIST OF ALL CAFES
 router.get("/cafes", (req, res, next) => {
   Cafe.find()
-    .populate("reviews") // populate reviews
+    /*.populate("reviews") // populate reviews */
     .then((allCafes) => res.status(200).json(allCafes))
     .catch((err) => {
       next(err);
@@ -40,7 +40,7 @@ router.get("/cafes", (req, res, next) => {
 //READ - LIST OF ONE SPECIFIC CAFE
 router.get("/cafes/:cafeId", (req, res, next) => {
   Cafe.findById(req.params.cafeId)
-    .populate("reviews") // populate reviews
+    /*.populate("reviews") // populate reviews */
     .then((cafeDetails) => res.status(200).json(cafeDetails))
     .catch((err) => {
       next(err);

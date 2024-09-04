@@ -22,12 +22,12 @@ const cafeSchema = new Schema({
     },
   ],
   specs: Array,
-  reviews: [
+  /*reviews: [
     {
       type: Schema.Types.ObjectId,
       ref: "Review",
     },
-  ],
+  ], */
 });
 
 const Cafe = model("Cafe", cafeSchema)
