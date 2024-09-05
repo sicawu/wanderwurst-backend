@@ -11,6 +11,7 @@ router.post("/cafes", /* isAuthenticated,*/ (req, res, next) => {
 
   if (
     req.body.title === "" ||
+    req.body.urlSlug === "" ||
     req.body.image === "" ||
     req.body.description === "" ||
     req.body.location.city === "" ||
@@ -38,14 +39,37 @@ router.get("/cafes", (req, res, next) => {
 });
 
 //READ - LIST OF ONE SPECIFIC CAFE
-router.get("/cafes/:cafeId", (req, res, next) => {
-  Cafe.findById(req.params.cafeId)
+router.get("/cafes/:urlSlug", (req, res, next) => {
+  Cafe.findOne({ urlSlug: req.params.urlSlug })
     /*.populate("reviews") // populate reviews */
-    .then((cafeDetails) => res.status(200).json(cafeDetails))
+    .then((cafeDetails) => {
+      if (!cafeDetails) {
+        return res.status(404).json({ message: "Cafe not found" });  // Handle not found case
+      }
+      res.status(200).json(cafeDetails);
+    })
     .catch((err) => {
-      next(err);
-    });
+      next(err)
+    })
+})
+
+// READ - LIST OF CAFES WITH ONE SPECIFIC TAG
+router.get('/cafes/filter', (req, res, next) => {
+  const specToFilter = req.query.spec; // Get spec from query string
+
+  // Find cafes where the specs array includes the given spec
+  Cafe.find({ specs: { $in: [specToFilter] } })
+      .then((cafes) => {
+          if (!cafes.length) {
+              return res.status(404).json({ message: 'No cafes found with this spec' });
+          }
+          res.status(200).json(cafes);
+      })
+      .catch((err) => {
+          next(err);
+      });
 });
+
 
 //UPDATE - USER NEEDS TO BE LOGGED IN
 router.put("/cafes/:cafeId", isAuthenticated, (req, res, next) => {

@@ -6,9 +6,17 @@ const cafeSchema = new Schema({
     required: [true, "Title is required."],
     unique: true,
   },
+  urlSlug: {
+    type: String,
+    required: [true, "URL is required."],
+    unique: true,
+  },
   image: {
     type: String,
     required: [true, "Image is required."],
+  },
+  imageAlt: {
+    type: String
   },
   description: {
     type: String,
@@ -21,7 +29,13 @@ const cafeSchema = new Schema({
       address: { type: String, required: [true, "Address is required."] },
     },
   ],
-  specs: Array,
+  specs: {
+    type: [String], // Array of strings for specs
+    required: true,
+  },
+  metaTitle: String,
+  metaDescription: String,
+
   /*reviews: [
     {
       type: Schema.Types.ObjectId,
