@@ -54,21 +54,19 @@ router.get("/cafes/:urlSlug", (req, res, next) => {
 })
 
 // READ - LIST OF CAFES WITH ONE SPECIFIC TAG
-router.get('/cafes/filter', (req, res, next) => {
-  const specToFilter = req.query.spec; // Get spec from query string
-
-  // Find cafes where the specs array includes the given spec
-  Cafe.find({ specs: { $in: [specToFilter] } })
-      .then((cafes) => {
-          if (!cafes.length) {
-              return res.status(404).json({ message: 'No cafes found with this spec' });
-          }
-          res.status(200).json(cafes);
-      })
-      .catch((err) => {
-          next(err);
-      });
-});
+router.get("/cafes/:specs", (req, res, next) => {
+  const formattedSpec = req.params.specs.replace(/-/g, ' ');  // Convert hyphens back to spaces
+  Cafe.find({ specs: { $in: [formattedSpec] } })  // Search for cafes with the matching spec
+    .then((cafes) => {
+      if (cafes.length === 0) {
+        return res.status(404).json({ message: "No cafes found with this spec" });
+      }
+      res.status(200).json(cafes);
+    })
+    .catch((err) => {
+      next(err);
+    });
+})
 
 
 //UPDATE - USER NEEDS TO BE LOGGED IN
