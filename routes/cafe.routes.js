@@ -54,9 +54,10 @@ router.get("/cafes/:urlSlug", (req, res, next) => {
 })
 
 // READ - LIST OF CAFES WITH ONE SPECIFIC TAG
-router.get("/cafes/:specs", (req, res, next) => {
+router.get("/cafes/tag/:specs", (req, res, next) => {
   const formattedSpec = req.params.specs.replace(/-/g, ' ');  // Convert hyphens back to spaces
-  Cafe.find({ specs: { $in: [formattedSpec] } })  // Search for cafes with the matching spec
+  console.log("Searching for cafes with spec:", formattedSpec);
+  Cafe.find({ specs: { $in: [new RegExp(`^${formattedSpec}$`, 'i')] } })  // Case-insensitive search for cafes with the matching spec
     .then((cafes) => {
       if (cafes.length === 0) {
         return res.status(404).json({ message: "No cafes found with this spec" });
