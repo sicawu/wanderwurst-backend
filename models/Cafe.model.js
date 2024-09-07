@@ -25,7 +25,7 @@ const cafeSchema = new Schema({
   location: [
     {
       city: { type: String, required: [true, "City is required."] },
-      neighborhood: { type: String },
+      country: { type: String },
       address: { type: String, required: [true, "Address is required."] },
     },
   ],
