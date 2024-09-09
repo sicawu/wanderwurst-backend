@@ -1,14 +1,14 @@
 const router = require("express").Router()
 const mongoose = require("mongoose")
 const Cafe = require("../models/Cafe.model.js")
+const axios = require('axios')
 
 const { isAuthenticated } = require("../middleware/jwt.middleware.js")
+const GOOGLE_API_KEY_2 = process.env.GOOGLE_API_KEY_2   // For Google Opening Hours
+
 
 //POST - USER NEEDS TO BE LOGGED IN
-router.post("/cafes", /* isAuthenticated,*/ (req, res, next) => {
-
-  console.log(req.body);
-
+router.post("/cafes", /* isAuthenticated,*/(req, res, next) => {
   if (
     req.body.title === "" ||
     req.body.urlSlug === "" ||
@@ -35,10 +35,10 @@ router.get("/cafes", (req, res, next) => {
     .then((allCafes) => res.status(200).json(allCafes))
     .catch((err) => {
       next(err);
-    });
-});
+    })
+})
 
-//READ - LIST OF ONE SPECIFIC CAFE
+//READ - DETAILS OF ONE SPECIFIC CAFE
 router.get("/cafes/:urlSlug", (req, res, next) => {
   Cafe.findOne({ urlSlug: req.params.urlSlug })
     /*.populate("reviews") // populate reviews */
@@ -87,6 +87,43 @@ router.get("/cafes/city/:city", (req, res, next) => {
     .catch((err) => next(err));
 })
 
+// READ - GET ALL EXISTING CITIES FOR HOMEPAGE
+router.get("/cities", (req, res, next) => {
+  Cafe.distinct("location.city")
+    .then((cities) => {
+      if (cities.length === 0) {
+        return res.status(404).json({ message: "No cities found" });
+      }
+      res.status(200).json(cities);
+    })
+    .catch((err) => next(err));
+})
+
+// READ - GET OPENING HOURS FOR ONE CAFE, BASED ON STORED PLACEID AND CONNECTION TO GOOGLE
+router.get('/cafe-opening-hours/:placeId', async (req, res) => {
+  const { placeId } = req.params;
+  console.log(placeId)
+  if (!placeId) {
+    return res.status(400).json({ message: "Place ID is required" });
+  }
+
+  try {
+    const response = await axios.get(
+      `https://maps.googleapis.com/maps/api/place/details/json?place_id=${placeId}&fields=opening_hours&key=${GOOGLE_API_KEY_2}`
+    );
+    console.log("API Response:", response.data);
+
+    if (response.data.result && response.data.result.opening_hours) {
+      res.json(response.data.result.opening_hours.weekday_text);
+    } else {
+      console.log("No opening hours found.");
+      res.status(404).json({ message: "No opening hours available" });
+    }
+  } catch (error) {
+    console.error("Error fetching opening hours:", error);
+    res.status(500).json({ error: 'Error fetching opening hours' });
+  }
+})
 
 //UPDATE - USER NEEDS TO BE LOGGED IN
 router.put("/cafes/:cafeId", isAuthenticated, (req, res, next) => {
@@ -105,7 +142,7 @@ router.put("/cafes/:cafeId", isAuthenticated, (req, res, next) => {
     res.status(401).json({ message: "Please enter all required fields." });
     return;
   }
-}); 
+});
 
 //DELETE - USER NEEDS TO BE LOGGED IN
 router.delete("/cafes/:cafeId", isAuthenticated, (req, res, next) => {

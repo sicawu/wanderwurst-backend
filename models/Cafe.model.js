@@ -27,11 +27,16 @@ const cafeSchema = new Schema({
       city: { type: String, required: [true, "City is required."] },
       country: { type: String },
       address: { type: String, required: [true, "Address is required."] },
+      lat: { type: Number, required: [true, "Latitude is required."] },
+      lng: { type: Number, required: [true, "Longitude is required."] },
     },
   ],
   specs: {
     type: [String], // Array of strings for specs
     required: true,
+  },
+  placeId: {
+    type: String
   },
   metaTitle: String,
   metaDescription: String,
