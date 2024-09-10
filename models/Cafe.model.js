@@ -31,12 +31,44 @@ const cafeSchema = new Schema({
       lng: { type: Number, required: [true, "Longitude is required."] },
     },
   ],
-  specs: {
-    type: [String], // Array of strings for specs
-    required: true,
-  },
   placeId: {
     type: String
+  },
+  specs: {
+    type: [String],
+    required: true,
+    enum: [
+      "Digital nomad friendly",
+      "Good wifi",
+      "Separate co-working space",
+      "Parking available",
+      "Air-conditioned",
+      "Outdoor seating",
+      "Comfy seating",
+      "Best coffee in town",
+      "Powerplugs at the table",
+      "Quiet atmosphere",
+      "Social spot",
+      "Connecting community",
+      "Brunch with the girlies"
+    ]
+  },
+  food: {
+    type: [String],
+    enum: [
+      "Pastries only",
+      "Cakes and sweets",
+      "Vegan only",
+      "Healthy food",
+      "Smoothie bowls",
+      "Avocado toast",
+      "Banana bread",
+      "Local food",
+      "International food",
+      "Something for everyone",
+      "Small selection",
+      "Huge variety"
+    ]
   },
   metaTitle: String,
   metaDescription: String,

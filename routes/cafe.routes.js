@@ -99,6 +99,13 @@ router.get("/cities", (req, res, next) => {
     .catch((err) => next(err));
 })
 
+// READ - GET ALL EXISTING SPECS FOR HOMEPAGE
+router.get("/specs", (req, res, next) => {
+  Cafe.distinct("specs")
+    .then((specs) => res.json(specs))
+    .catch(next)
+})
+
 // READ - GET OPENING HOURS FOR ONE CAFE, BASED ON STORED PLACEID AND CONNECTION TO GOOGLE
 router.get('/cafe-opening-hours/:placeId', async (req, res) => {
   const { placeId } = req.params;
