@@ -73,14 +73,21 @@ router.get("/cafes/tag/:specs", (req, res, next) => {
 // READ - LIST OF CAFES FOR ONE CITY
 router.get("/cafes/city/:city", (req, res, next) => {
   const formattedCity = req.params.city.replace(/-/g, ' ').toLowerCase();  // Normalize city name
+  const selectedSpecs = req.query.specs ? req.query.specs.split(',') : [];
   console.log("Searching for cafes in city:", formattedCity);
 
-  Cafe.find({
-    "location.city": new RegExp(`^${formattedCity}$`, 'i')  // Case-insensitive search
-  })
+  const cityQuery = {
+    "location.city": new RegExp(`^${formattedCity}$`, 'i')
+  };
+
+  if (selectedSpecs.length > 0) {
+    cityQuery.specs = { $in: selectedSpecs };
+  }
+
+   Cafe.find(cityQuery)
     .then((cafes) => {
       if (cafes.length === 0) {
-        return res.status(404).json({ message: "No cafes found in this city" });
+        return res.status(404).json({ message: "No cafes found for this city with the selected specs" });
       }
       res.status(200).json(cafes);
     })
@@ -103,7 +110,7 @@ router.get("/cities", (req, res, next) => {
 router.get("/specs", (req, res, next) => {
   Cafe.distinct("specs")
     .then((specs) => res.json(specs))
-    .catch(next)
+    .catch(next);
 })
 
 // READ - GET OPENING HOURS FOR ONE CAFE, BASED ON STORED PLACEID AND CONNECTION TO GOOGLE
