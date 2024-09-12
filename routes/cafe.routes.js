@@ -94,6 +94,22 @@ router.get("/cafes/city/:city", (req, res, next) => {
     .catch((err) => next(err));
 })
 
+// READ - LIST OF CAFES WITH ONE SPECIFIC PURPOSE/TOPPICK
+router.get("/cafes/for/:toppick", (req, res, next) => {
+  const formattedTopPick = req.params.toppick.replace(/-/g, ' ');  // Convert hyphens back to spaces
+  console.log("Searching for cafes for following purpose:", formattedTopPick);
+  Cafe.find({ topPick: { $in: [new RegExp(`^${formattedTopPick}$`, 'i')] } })  // Case-insensitive search for cafes with the matching spec
+    .then((cafes) => {
+      if (cafes.length === 0) {
+        return res.status(404).json({ message: "No cafes found with this spec" });
+      }
+      res.status(200).json(cafes);
+    })
+    .catch((err) => {
+      next(err);
+    });
+})
+
 // READ - GET ALL EXISTING CITIES FOR HOMEPAGE
 router.get("/cities", (req, res, next) => {
   Cafe.distinct("location.city")
