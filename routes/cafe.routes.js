@@ -129,6 +129,18 @@ router.get("/specs", (req, res, next) => {
     .catch(next);
 })
 
+// READ - GET ALL EXISTING TOPPICKS FOR HOMEPAGE
+router.get("/topPick", (req, res, next) => {
+  Cafe.distinct("topPick")
+    .then((topPick) => {
+      if (topPick.length === 0) {
+        return res.status(404).json({ message: "No cities found" });
+      }
+      res.status(200).json(topPick);
+    })
+    .catch((err) => next(err));
+})
+
 // READ - GET OPENING HOURS FOR ONE CAFE, BASED ON STORED PLACEID AND CONNECTION TO GOOGLE
 router.get('/cafe-opening-hours/:placeId', async (req, res) => {
   const { placeId } = req.params;
