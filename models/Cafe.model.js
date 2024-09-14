@@ -73,12 +73,12 @@ const cafeSchema = new Schema({
   topPick: {
     type: [String],
     enum: [
-      "Working", 
-      "BestCoffee",
-      "Socializing",
-      "GirliesBrunch",
-      "LocalPlace",
-      "Sustainable"
+      "working", 
+      "bestCoffee",
+      "socializing",
+      "girliesBrunch",
+      "localPlace",
+      "sustainable"
     ]
   },
   metaTitle: String,
