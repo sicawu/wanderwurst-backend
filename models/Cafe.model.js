@@ -35,21 +35,22 @@ const cafeSchema = new Schema({
   },
   specs: {
     type: [String],
-    required: true,
     enum: [
       "Digital nomad friendly",
       "Good wifi",
       "Separate co-working space",
-      "Parking available",
       "Air-conditioned",
+      "Free drinking water",
       "Outdoor seating",
+      "Ergonomic seating",
       "Comfy seating",
       "Best coffee in town",
       "Powerplugs at the table",
       "Quiet atmosphere",
-      "Social spot",
-      "Connecting community",
-      "Brunch with the girlies"
+      "Hosting workshops and events",
+      "Selling local crafts",
+      "Selling organic food",
+      "Kids high chairs available"
     ]
   },
   food: {
@@ -57,16 +58,24 @@ const cafeSchema = new Schema({
     enum: [
       "Pastries only",
       "Cakes and sweets",
+      "Plant-based milk options",
+      "Dairy milk only",
+      "Fancy drinks",
       "Vegan only",
+      "Vegan and vegetarian options",
+      "Pescetarian friendly",
       "Healthy food",
+      "Local food",
+      "International food",
+      "Halal food",
+      "Something for everyone",
+      "Small food selection",
+      "Huge dish variety",
+      "Meat lovers heaven",
       "Smoothie bowls",
       "Avocado toast",
       "Banana bread",
-      "Local food",
-      "International food",
-      "Something for everyone",
-      "Small selection",
-      "Huge variety"
+      "Pizza and pasta"
     ]
   },
   topPick: {
