@@ -69,7 +69,6 @@ router.get("/cafes/tag/:specs", (req, res, next) => {
     });
 })
 
-
 // READ - LIST OF CAFES FOR ONE CITY
 router.get("/cafes/city/:city", (req, res, next) => {
   const formattedCity = req.params.city.replace(/-/g, ' ').toLowerCase();  // Normalize city name
@@ -94,6 +93,22 @@ router.get("/cafes/for/:toppick", (req, res, next) => {
   const formattedTopPick = req.params.toppick.replace(/-/g, ' ');  // Convert hyphens back to spaces
   console.log("Searching for cafes for following purpose:", formattedTopPick);
   Cafe.find({ topPick: { $in: [new RegExp(`^${formattedTopPick}$`, 'i')] } })  // Case-insensitive search for cafes with the matching spec
+    .then((cafes) => {
+      if (cafes.length === 0) {
+        return res.status(404).json({ message: "No cafes found with this spec" });
+      }
+      res.status(200).json(cafes);
+    })
+    .catch((err) => {
+      next(err);
+    });
+})
+
+// READ - LIST OF CAFES WITH ONE SPECIFIC FOOD OPTION
+router.get("/cafes/food/:food", (req, res, next) => {
+  const formattedFood = req.params.food.replace(/-/g, ' ');  // Convert hyphens back to spaces
+  console.log("Searching for cafes with food option:", formattedFood);
+  Cafe.find({ food: { $in: [new RegExp(`^${formattedFood}$`, 'i')] } })  // Case-insensitive search for cafes with the matching spec
     .then((cafes) => {
       if (cafes.length === 0) {
         return res.status(404).json({ message: "No cafes found with this spec" });
@@ -132,6 +147,18 @@ router.get("/topPick", (req, res, next) => {
         return res.status(404).json({ message: "No cities found" });
       }
       res.status(200).json(topPick);
+    })
+    .catch((err) => next(err));
+})
+
+// READ - GET ALL EXISTING FOOD OPTIONS FOR HOMEPAGE
+router.get("/food", (req, res, next) => {
+  Cafe.distinct("food")
+    .then((food) => {
+      if (food.length === 0) {
+        return res.status(404).json({ message: "No cities found" });
+      }
+      res.status(200).json(food);
     })
     .catch((err) => next(err));
 })
