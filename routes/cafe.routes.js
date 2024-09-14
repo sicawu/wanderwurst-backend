@@ -73,15 +73,10 @@ router.get("/cafes/tag/:specs", (req, res, next) => {
 // READ - LIST OF CAFES FOR ONE CITY
 router.get("/cafes/city/:city", (req, res, next) => {
   const formattedCity = req.params.city.replace(/-/g, ' ').toLowerCase();  // Normalize city name
-  const selectedSpecs = req.query.specs ? req.query.specs.split(',') : [];
   console.log("Searching for cafes in city:", formattedCity);
 
   const cityQuery = {
     "location.city": new RegExp(`^${formattedCity}$`, 'i')
-  };
-
-  if (selectedSpecs.length > 0) {
-    cityQuery.specs = { $in: selectedSpecs };
   }
 
    Cafe.find(cityQuery)
@@ -178,8 +173,8 @@ router.put("/cafes/:cafeId", isAuthenticated, (req, res, next) => {
     req.body.title === "" ||
     req.body.image === "" ||
     req.body.description === "" ||
-    req.body.location[0].city === "" ||
-    req.body.location[0].address === ""
+    req.body.location.city === "" ||
+    req.body.location.address === ""
   ) {
     res.status(401).json({ message: "Please enter all required fields." });
     return;
