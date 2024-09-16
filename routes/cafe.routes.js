@@ -106,9 +106,13 @@ router.get("/cafes/for/:toppick", (req, res, next) => {
 
 // READ - LIST OF CAFES WITH ONE SPECIFIC FOOD OPTION
 router.get("/cafes/food/:food", (req, res, next) => {
-  const formattedFood = req.params.food.replace(/-/g, ' ');  // Convert hyphens back to spaces
-  console.log("Searching for cafes with food option:", formattedFood);
-  Cafe.find({ food: { $in: [new RegExp(`^${formattedFood}$`, 'i')] } })  // Case-insensitive search for cafes with the matching spec
+  const formattedFood = req.params.food.replace(/-/g, ' '); 
+  const city = req.query.city; // Optional city parameter
+
+  const foodQuery = { food: { $in: [new RegExp(`^${formattedFood}$`, 'i')] } };
+  const cityQuery = city ? { location: { city } } : {};
+
+  Cafe.find({ $or: [foodQuery, cityQuery] })
     .then((cafes) => {
       if (cafes.length === 0) {
         return res.status(404).json({ message: "No cafes found with this spec" });

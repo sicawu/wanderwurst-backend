@@ -15,17 +15,15 @@ const cafeSchema = new Schema({
     type: String,
     required: [true, "Image is required."],
   },
-  imageAlt: {
-    type: String
-  },
   description: {
     type: String,
     required: [true, "Description is required."],
   },
+  recommendation: String,
   location: 
     {
       city: { type: String, required: [true, "City is required."] },
-      country: { type: String },
+      country: { type: String, required: [true, "Country is required."] },
       address: { type: String, required: [true, "Address is required."] },
       lat: { type: Number, required: [true, "Latitude is required."] },
       lng: { type: Number, required: [true, "Longitude is required."] },
@@ -40,7 +38,6 @@ const cafeSchema = new Schema({
       "Good wifi",
       "Separate co-working space",
       "Air-conditioned",
-      "Free drinking water",
       "Outdoor seating",
       "Ergonomic seating",
       "Comfy seating",
@@ -58,11 +55,12 @@ const cafeSchema = new Schema({
     enum: [
       "Pastries only",
       "Cakes and sweets",
+      "Free drinking water",
       "Plant-based milk options",
       "Dairy milk only",
       "Fancy drinks",
       "Vegan only",
-      "Vegan and vegetarian options",
+      "Vegan and vegetarian",
       "Pescetarian friendly",
       "Healthy food",
       "Local food",
@@ -75,7 +73,8 @@ const cafeSchema = new Schema({
       "Smoothie bowls",
       "Avocado toast",
       "Banana bread",
-      "Pizza and pasta"
+      "Pizza and pasta",
+      "Fresh juices and smoothies"
     ]
   },
   topPick: {
@@ -91,14 +90,13 @@ const cafeSchema = new Schema({
   },
   metaTitle: String,
   metaDescription: String,
-
   /*reviews: [
     {
       type: Schema.Types.ObjectId,
       ref: "Review",
     },
   ], */
-});
+})
 
 const Cafe = model("Cafe", cafeSchema)
 
