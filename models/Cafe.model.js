@@ -77,6 +77,21 @@ const cafeSchema = new Schema({
       "Fresh juices and smoothies"
     ]
   },
+  drinks: {
+    type: [String],
+    enum: [
+      "Amazing baristas",
+      "Free drinking water",
+      "Plant-based milk options",
+      "Dairy milk only",
+      "Fancy drinks",
+      "Fresh juices",
+      "Smoothies",
+      "Kombucha",
+      "Coconuts",
+      "Alcoholic beverages"
+    ]
+  },
   topPick: {
     type: [String],
     enum: [

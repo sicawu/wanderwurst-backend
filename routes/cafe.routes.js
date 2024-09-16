@@ -104,6 +104,26 @@ router.get("/cafes/for/:toppick", (req, res, next) => {
     });
 })
 
+// READ - LIST OF CAFES WITH ONE SPECIFIC DRINK OPTION
+router.get("/cafes/drinks/:drinks", (req, res, next) => {
+  const formattedDrinks = req.params.drinks.replace(/-/g, ' '); 
+  const city = req.query.city; // Optional city parameter
+
+  const drinksQuery = { drinks: { $in: [new RegExp(`^${formattedDrinks}$`, 'i')] } };
+  const cityQuery = city ? { location: { city } } : {};
+
+  Cafe.find({ $or: [drinksQuery, cityQuery] })
+    .then((cafes) => {
+      if (cafes.length === 0) {
+        return res.status(404).json({ message: "No cafes found with this spec" });
+      }
+      res.status(200).json(cafes);
+    })
+    .catch((err) => {
+      next(err);
+    });
+})
+
 // READ - LIST OF CAFES WITH ONE SPECIFIC FOOD OPTION
 router.get("/cafes/food/:food", (req, res, next) => {
   const formattedFood = req.params.food.replace(/-/g, ' '); 
@@ -163,6 +183,18 @@ router.get("/food", (req, res, next) => {
         return res.status(404).json({ message: "No cities found" });
       }
       res.status(200).json(food);
+    })
+    .catch((err) => next(err));
+})
+
+// READ - GET ALL EXISTING FOOD OPTIONS FOR HOMEPAGE
+router.get("/drinks", (req, res, next) => {
+  Cafe.distinct("drinks")
+    .then((drinks) => {
+      if (drinks.length === 0) {
+        return res.status(404).json({ message: "No cities found" });
+      }
+      res.status(200).json(drinks);
     })
     .catch((err) => next(err));
 })
