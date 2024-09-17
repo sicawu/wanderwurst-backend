@@ -6,9 +6,9 @@ const axios = require('axios')
 const { isAuthenticated } = require("../middleware/jwt.middleware.js")
 const GOOGLE_API_KEY_2 = process.env.GOOGLE_API_KEY_2   // For Google Opening Hours
 
-
+{/*
 //POST - USER NEEDS TO BE LOGGED IN
-router.post("/cafes", /* isAuthenticated,*/(req, res, next) => {
+router.post("/cafes", /* isAuthenticated,(req, res, next) => {
   if (
     req.body.title === "" ||
     req.body.urlSlug === "" ||
@@ -28,15 +28,41 @@ router.post("/cafes", /* isAuthenticated,*/(req, res, next) => {
     });
 });
 
+
 //READ - LIST OF ALL CAFES
 router.get("/cafes", (req, res, next) => {
   Cafe.find()
-    /*.populate("reviews") // populate reviews */
+    /*.populate("reviews") // populate reviews
     .then((allCafes) => res.status(200).json(allCafes))
     .catch((err) => {
       next(err);
     })
 })
+*/}
+
+
+// READ - GET CAFES WITH OPTIONAL FILTERS CITY + HUNGRY (FOR RANDOM PAGE)
+router.get("/cafes", (req, res, next) => {
+  const { city, hungry } = req.query;
+  let query = {};
+
+  if (city) {
+    query["location.city"] = new RegExp(`^${city.replace(/-/g, ' ')}$`, 'i'); // Normalize city name
+  }
+  if (hungry) {
+    query.hungry = hungry === 'true'; // Convert 'hungry' query param to boolean
+  }
+
+  Cafe.find(query)
+    .then((cafes) => {
+      if (cafes.length === 0) {
+        return res.status(404).json({ message: "No cafes found for the selected criteria" });
+      }
+      res.status(200).json(cafes);
+    })
+    .catch((err) => next(err));
+});
+
 
 //READ - DETAILS OF ONE SPECIFIC CAFE
 router.get("/cafes/:urlSlug", (req, res, next) => {
@@ -107,12 +133,8 @@ router.get("/cafes/for/:toppick", (req, res, next) => {
 // READ - LIST OF CAFES WITH ONE SPECIFIC DRINK OPTION
 router.get("/cafes/drinks/:drinks", (req, res, next) => {
   const formattedDrinks = req.params.drinks.replace(/-/g, ' '); 
-  const city = req.query.city; // Optional city parameter
-
   const drinksQuery = { drinks: { $in: [new RegExp(`^${formattedDrinks}$`, 'i')] } };
-  const cityQuery = city ? { location: { city } } : {};
-
-  Cafe.find({ $or: [drinksQuery, cityQuery] })
+  Cafe.find({ $or: [drinksQuery] })
     .then((cafes) => {
       if (cafes.length === 0) {
         return res.status(404).json({ message: "No cafes found with this spec" });
@@ -121,18 +143,15 @@ router.get("/cafes/drinks/:drinks", (req, res, next) => {
     })
     .catch((err) => {
       next(err);
-    });
-})
+    }); 
+}) 
 
 // READ - LIST OF CAFES WITH ONE SPECIFIC FOOD OPTION
 router.get("/cafes/food/:food", (req, res, next) => {
   const formattedFood = req.params.food.replace(/-/g, ' '); 
-  const city = req.query.city; // Optional city parameter
-
   const foodQuery = { food: { $in: [new RegExp(`^${formattedFood}$`, 'i')] } };
-  const cityQuery = city ? { location: { city } } : {};
 
-  Cafe.find({ $or: [foodQuery, cityQuery] })
+  Cafe.find({ $or: [foodQuery] })
     .then((cafes) => {
       if (cafes.length === 0) {
         return res.status(404).json({ message: "No cafes found with this spec" });
@@ -198,6 +217,48 @@ router.get("/drinks", (req, res, next) => {
     })
     .catch((err) => next(err));
 })
+
+// READ - GET ALL EXISTING CAFES WHERE HUNGRY IS TRUE
+router.get("/hungry", (req, res, next) => {
+  Cafe.find({ hungry : true })
+    .then((cafes) => {
+      if (cafes.length === 0) {
+        console.log('Found cafes:', cafes);
+        return res.status(404).json({ message: "There's no cafe for hungry people" })
+      }
+      res.status(200).json(cafes);
+    })
+    .catch((err) => next(err));
+})
+
+
+{/*
+// Get cafes for the Random Selector: City + Hungry
+router.get('/cafes/random', (req, res, next) => {
+  const { city, hungry } = req.query; // Get city and hungry from query parameters
+
+  // Build the query based on the parameters
+  let query = {};
+
+  if (city) {
+      query['location.city'] = city; // Adjust to match your database field for city
+  }
+
+  if (hungry) {
+      query['food'] = { $exists: true, $ne: [] }; // Adjust to match how you store food in your database
+  }
+
+  // Find cafes matching the query
+  Cafe.find(query)
+      .then((cafes) => {
+          res.status(200).json(cafes);
+      })
+      .catch((err) => {
+          next(err);
+      });
+});
+*/}
+
 
 // READ - GET OPENING HOURS FOR ONE CAFE, BASED ON STORED PLACEID AND CONNECTION TO GOOGLE
 router.get('/cafe-opening-hours/:placeId', async (req, res) => {

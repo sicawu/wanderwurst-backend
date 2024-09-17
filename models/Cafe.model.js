@@ -47,7 +47,8 @@ const cafeSchema = new Schema({
       "Hosting workshops and events",
       "Selling local crafts",
       "Selling organic food",
-      "Kids high chairs available"
+      "Kids high chairs available",
+      "Dog friendly"
     ]
   },
   food: {
@@ -77,10 +78,15 @@ const cafeSchema = new Schema({
       "Fresh juices and smoothies"
     ]
   },
+  hungry: {
+    type: Boolean, 
+    default: false
+  },
   drinks: {
     type: [String],
     enum: [
-      "Amazing baristas",
+      "Barista coffee",
+      "Local coffee specialities",
       "Free drinking water",
       "Plant-based milk options",
       "Dairy milk only",
