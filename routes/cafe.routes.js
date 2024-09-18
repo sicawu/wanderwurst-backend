@@ -132,6 +132,7 @@ router.get("/cafes/for/:toppick", (req, res, next) => {
 
 // READ - LIST OF CAFES WITH ONE SPECIFIC DRINK OPTION
 router.get("/cafes/drinks/:drinks", (req, res, next) => {
+  const drinks = decodeURIComponent(req.params.drinks);
   const formattedDrinks = req.params.drinks.replace(/-/g, ' '); 
   const drinksQuery = { drinks: { $in: [new RegExp(`^${formattedDrinks}$`, 'i')] } };
   Cafe.find({ $or: [drinksQuery] })
