@@ -20,13 +20,16 @@ const cafeSchema = new Schema({
     required: [true, "Description is required."],
   },
   recommendation: String,
-  location: 
-    {
-      city: { type: String, required: [true, "City is required."] },
-      country: { type: String, required: [true, "Country is required."] },
-      address: { type: String, required: [true, "Address is required."] },
-      lat: { type: Number, required: [true, "Latitude is required."] },
-      lng: { type: Number, required: [true, "Longitude is required."] },
+  location:
+  {
+    city: { type: String, required: [true, "City is required."] },
+    country: { type: String, required: [true, "Country is required."] },
+    address: { type: String, required: [true, "Address is required."] },
+    lat: { type: Number, required: [true, "Latitude is required."] },
+    lng: { type: Number, required: [true, "Longitude is required."] },
+  },
+  linkGoogleMaps: {
+    type: String
   },
   placeId: {
     type: String
@@ -56,10 +59,6 @@ const cafeSchema = new Schema({
     enum: [
       "Pastries only",
       "Cakes and sweets",
-      "Free drinking water",
-      "Plant-based milk options",
-      "Dairy milk only",
-      "Fancy drinks",
       "Vegan only",
       "Vegan and vegetarian",
       "Pescetarian friendly",
@@ -74,12 +73,13 @@ const cafeSchema = new Schema({
       "Smoothie bowls",
       "Avocado toast",
       "Banana bread",
+      "Sandwich",
       "Pizza and pasta",
-      "Fresh juices and smoothies"
+
     ]
   },
   hungry: {
-    type: Boolean, 
+    type: Boolean,
     default: false
   },
   drinks: {
@@ -101,7 +101,7 @@ const cafeSchema = new Schema({
   topPick: {
     type: [String],
     enum: [
-      "working", 
+      "working",
       "bestCoffee",
       "socializing",
       "girliesBrunch",
