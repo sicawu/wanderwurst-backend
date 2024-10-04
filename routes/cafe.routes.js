@@ -68,6 +68,7 @@ router.get("/cafes", (req, res, next) => {
 router.get("/cafes/:urlSlug", (req, res, next) => {
   Cafe.findOne({ urlSlug: req.params.urlSlug })
     /*.populate("reviews") // populate reviews */
+    .populate("cafeSuggestions")
     .then((cafeDetails) => {
       if (!cafeDetails) {
         return res.status(404).json({ message: "Cafe not found" });  // Handle not found case
@@ -78,6 +79,31 @@ router.get("/cafes/:urlSlug", (req, res, next) => {
       next(err)
     })
 })
+
+router.get("/suggestions", async (req, res, next) => {
+  const { urlSlug } = req.query;
+  if (!urlSlug) {
+    return res.status(400).json({ message: "Cafe URL slug is required" });
+  }
+
+  try {
+    const cafe = await Cafe.findOne({ urlSlug }).populate('cafeSuggestions');
+    if (!cafe) {
+      return res.status(404).json({ message: "Cafe not found" });
+    }
+
+    const transformedSuggestions = cafe.cafeSuggestions.map((suggestion) => ({
+      title: suggestion.title,
+      image: suggestion.image,
+      urlSlug: suggestion.urlSlug,
+      location: suggestion.location,
+    }));
+
+    res.status(200).json(transformedSuggestions);
+  } catch (err) {
+    next(err);
+  }
+});
 
 // READ - LIST OF CAFES WITH ONE SPECIFIC TAG
 router.get("/cafes/tag/:specs", (req, res, next) => {
@@ -231,35 +257,6 @@ router.get("/hungry", (req, res, next) => {
     })
     .catch((err) => next(err));
 })
-
-
-{/*
-// Get cafes for the Random Selector: City + Hungry
-router.get('/cafes/random', (req, res, next) => {
-  const { city, hungry } = req.query; // Get city and hungry from query parameters
-
-  // Build the query based on the parameters
-  let query = {};
-
-  if (city) {
-      query['location.city'] = city; // Adjust to match your database field for city
-  }
-
-  if (hungry) {
-      query['food'] = { $exists: true, $ne: [] }; // Adjust to match how you store food in your database
-  }
-
-  // Find cafes matching the query
-  Cafe.find(query)
-      .then((cafes) => {
-          res.status(200).json(cafes);
-      })
-      .catch((err) => {
-          next(err);
-      });
-});
-*/}
-
 
 // READ - GET OPENING HOURS FOR ONE CAFE, BASED ON STORED PLACEID AND CONNECTION TO GOOGLE
 router.get('/cafe-opening-hours/:placeId', async (req, res) => {

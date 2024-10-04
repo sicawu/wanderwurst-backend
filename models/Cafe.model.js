@@ -74,8 +74,8 @@ const cafeSchema = new Schema({
       "Avocado toast",
       "Banana bread",
       "Sandwich",
-      "Pizza and pasta",
-
+      "Pizza",
+      "Pasta"
     ]
   },
   hungry: {
@@ -109,6 +109,9 @@ const cafeSchema = new Schema({
       "sustainable"
     ]
   },
+  cafeSuggestions: [{
+    type: String
+  }],
   metaTitle: String,
   metaDescription: String,
   /*reviews: [
