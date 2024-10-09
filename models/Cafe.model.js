@@ -37,45 +37,47 @@ const cafeSchema = new Schema({
   specs: {
     type: [String],
     enum: [
-      "Digital nomad friendly",
-      "Good wifi",
-      "Co-working space",
+      "Digital Nomad-friendly",
+      "Good Wifi",
+      "Separate Co-working Space",
       "Air-conditioned",
-      "Outdoor seating",
-      "Ergonomic seating",
-      "Comfy seating",
-      "Best coffee in town",
+      "Cosy Atmosphere",
+      "Outdoor Seating",
+      "Ergonomic Seating",
+      "Best Coffee in Town",
       "Powerplugs",
-      "Quiet atmosphere",
-      "Hosting workshops and events",
-      "Selling local crafts",
-      "Selling organic food",
-      "Kids high chairs available",
-      "Dog friendly"
+      "Quiet Atmosphere",
+      "Hosting Workshops and Events",
+      "Selling Local Crafts",
+      "Selling Organic TA-Food",
+      "Kids High Chairs available",
+      "Dog-friendly"
     ]
   },
   food: {
     type: [String],
     enum: [
       "Pastries only",
-      "Cakes and sweets",
+      "Cakes and Sweets",
       "Vegan only",
       "Vegan and vegetarian",
       "Pescetarian friendly",
-      "Healthy food",
-      "Local food",
-      "International food",
-      "Halal food",
-      "Something for everyone",
-      "Small food selection",
-      "Huge dish variety",
-      "Meat lovers heaven",
-      "Smoothie bowls",
-      "Avocado toast",
-      "Banana bread",
-      "Sandwich",
+      "Healthy Food",
+      "Local Food",
+      "International Food",
+      "Halal Food",
+      "Something for Everyone",
+      "Small Bites",
+      "Meat Lovers Heaven",
+      "Smoothie Bowls",
+      "Poke Bowls",
+      "Avocado Toast",
+      "Banana Bread",
+      "Sushi",
+      "Sandwiches",
       "Pizza",
-      "Pasta"
+      "Pasta",
+      "Burger"
     ]
   },
   hungry: {
@@ -85,17 +87,17 @@ const cafeSchema = new Schema({
   drinks: {
     type: [String],
     enum: [
-      "Barista coffee",
-      "Local coffee specialities",
-      "Free drinking water",
+      "Barista Coffee",
+      "Local Coffee Specialities",
+      "Free Drinking Water",
       "Plant-based milk options",
       "Dairy milk only",
-      "Fancy drinks",
-      "Fresh juices",
+      "Fancy Drinks",
+      "Fresh Juices",
       "Smoothies",
       "Kombucha",
       "Coconuts",
-      "Alcoholic beverages"
+      "Alcoholic Beverages"
     ]
   },
   topPick: {
