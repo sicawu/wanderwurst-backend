@@ -107,9 +107,9 @@ router.get("/suggestions", async (req, res, next) => {
 
 // READ - LIST OF CAFES WITH ONE SPECIFIC TAG
 router.get("/cafes/tag/:specs", (req, res, next) => {
-  const formattedSpec = req.params.specs.replace(/-/g, ' ');  // Convert hyphens back to spaces
-  console.log("Searching for cafes with spec:", formattedSpec);
-  Cafe.find({ specs: { $in: [new RegExp(`^${formattedSpec}$`, 'i')] } })  // Case-insensitive search for cafes with the matching spec
+  const formattedSpec = req.params.specs.replace(/-/g, ' ');
+  const regexPattern = formattedSpec.replace(/\s+/g, '[\\s-]*'); // Replace spaces with optional hyphen or space
+  Cafe.find({ specs: { $regex: regexPattern, $options: 'i' } })
     .then((cafes) => {
       if (cafes.length === 0) {
         return res.status(404).json({ message: "No cafes found with this spec" });
@@ -158,10 +158,9 @@ router.get("/cafes/for/:toppick", (req, res, next) => {
 
 // READ - LIST OF CAFES WITH ONE SPECIFIC DRINK OPTION
 router.get("/cafes/drinks/:drinks", (req, res, next) => {
-  const drinks = decodeURIComponent(req.params.drinks);
-  const formattedDrinks = req.params.drinks.replace(/-/g, ' '); 
-  const drinksQuery = { drinks: { $in: [new RegExp(`^${formattedDrinks}$`, 'i')] } };
-  Cafe.find({ $or: [drinksQuery] })
+  const formattedDrink = req.params.drinks.replace(/-/g, ' '); 
+  const regexPattern = formattedDrink.replace(/\s+/g, '[\\s-]*'); // Replace spaces with optional hyphen or space
+  Cafe.find({ drinks: { $regex: regexPattern, $options: 'i' } })
     .then((cafes) => {
       if (cafes.length === 0) {
         return res.status(404).json({ message: "No cafes found with this spec" });
@@ -176,9 +175,8 @@ router.get("/cafes/drinks/:drinks", (req, res, next) => {
 // READ - LIST OF CAFES WITH ONE SPECIFIC FOOD OPTION
 router.get("/cafes/food/:food", (req, res, next) => {
   const formattedFood = req.params.food.replace(/-/g, ' '); 
-  const foodQuery = { food: { $in: [new RegExp(`^${formattedFood}$`, 'i')] } };
-
-  Cafe.find({ $or: [foodQuery] })
+  const regexPattern = formattedFood.replace(/\s+/g, '[\\s-]*'); // Replace spaces with optional hyphen or space
+  Cafe.find({ food: { $regex: regexPattern, $options: 'i' } })
     .then((cafes) => {
       if (cafes.length === 0) {
         return res.status(404).json({ message: "No cafes found with this spec" });
