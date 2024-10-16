@@ -49,7 +49,7 @@ const cafeSchema = new Schema({
       "Quiet Atmosphere",
       "Hosting Workshops and Events",
       "Selling Local Crafts",
-      "Selling Organic TA-Food",
+      "Selling Organic Food",
       "Kids High Chairs available",
       "Dog-friendly"
     ]
@@ -59,8 +59,8 @@ const cafeSchema = new Schema({
     enum: [
       "Pastries only",
       "Cakes and Sweets",
-      "Vegan only",
-      "Vegan and vegetarian",
+      "Vegan",
+      "Vegetarian",
       "Pescetarian friendly",
       "Healthy Food",
       "Local Food",
@@ -77,6 +77,7 @@ const cafeSchema = new Schema({
       "Sandwiches",
       "Pizza",
       "Pasta",
+      "Tacos",
       "Burger"
     ]
   },
@@ -88,10 +89,11 @@ const cafeSchema = new Schema({
     type: [String],
     enum: [
       "Barista Coffee",
+      "Matcha",
       "Local Coffee Specialities",
       "Free Drinking Water",
-      "Plant-based milk options",
-      "Dairy milk only",
+      "Plant-Based Milk Options",
+      "Dairy Milk only",
       "Fancy Drinks",
       "Fresh Juices",
       "Smoothies",
