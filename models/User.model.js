@@ -1,29 +1,43 @@
 const { Schema, model } = require("mongoose");
 
-// TODO: Please make sure you edit the User model to whatever makes sense in this case
 const userSchema = new Schema(
   {
     email: {
       type: String,
-      required: [true, "Email is required."],
+      required: true,
       unique: true,
-      lowercase: true,
-      trim: true,
-    },
-    password: {
-      type: String,
-      required: [true, "Password is required."],
     },
     name: {
       type: String,
-      required: [true, "Name is required."],
+      required: true,
     },
+    googleId: {
+      type: String,
+      unique: true, 
+      sparse: true, // Allows null values, so it won't affect uniqueness of other fields
+    },
+    createdAt: {
+      type: Date,
+      default: Date.now,
+    },
+    updatedAt: {
+      type: Date,
+      default: Date.now,
+    },
+    wishlist: [
+      {
+        type: Schema.Types.ObjectId,
+        ref: "Cafe",
+      },
+    ],
   },
-  {
-    // this second object adds extra properties: `createdAt` and `updatedAt`
-    timestamps: true,
-  }
 );
+
+// Middleware to update the updatedAt field on document save
+userSchema.pre('save', function (next) {
+  this.updatedAt = Date.now();
+  next();
+});
 
 const User = model("User", userSchema);
 
