@@ -16,6 +16,9 @@ const userSchema = new Schema(
       unique: true, 
       sparse: true, // Allows null values, so it won't affect uniqueness of other fields
     },
+    picture: {
+      type: String,
+    },
     createdAt: {
       type: Date,
       default: Date.now,

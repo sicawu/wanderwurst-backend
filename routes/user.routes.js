@@ -5,7 +5,7 @@ const router = express.Router();
 // POST: Register a new user
 router.post("/register", async (req, res, next) => {
   console.log('Request Body:', req.body); // Log the request body
-  const { email, name, googleId } = req.body;
+  const { email, name, googleId, picture } = req.body;
 
   try {
     // Check if the user already exists
@@ -15,7 +15,7 @@ router.post("/register", async (req, res, next) => {
     }
 
     // Create a new user
-    const newUser  = await User.create({ email, name, googleId });
+    const newUser  = await User.create({ email, name, googleId, picture });
     const user = { email: newUser .email, name: newUser .name };
 
     // Send a response with the user object
@@ -23,6 +23,23 @@ router.post("/register", async (req, res, next) => {
   } catch (error) {
     console.error('Error registering user:', error); // Log the error
     res.status(400).json({ error: error.message });
+  }
+});
+
+// GET: Check if user exists
+router.get("/check", async (req, res) => {
+  const { googleId } = req.query; // Get googleId from query parameters
+
+  try {
+    const foundUser  = await User.findOne({ googleId });
+    if (foundUser ) {
+      return res.status(200).json({ exists: true, user: foundUser  });
+    } else {
+      return res.status(200).json({ exists: false });
+    }
+  } catch (error) {
+    console.error('Error checking user existence:', error);
+    res.status(500).json({ error: 'Internal server error' });
   }
 });
 
