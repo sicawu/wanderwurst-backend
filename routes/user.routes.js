@@ -44,7 +44,55 @@ router.get("/check", async (req, res) => {
   }
 });
 
+// Get user by Google ID and return their wishlist
+router.get("/:id", async (req, res, next) => {
+    const googleId = req.params.id; // Access the specific parameter 'id'
 
+    try {
+        const userDetails = await User.findOne({ googleId: googleId });
+        if (!userDetails) {
+            return res.status(404).json({ message: "User  not found" }); // Handle not found case
+        }
+
+        // Fetch cafes based on the urlSlugs in the user's wishlist
+        const cafes = await Cafe.find({ urlSlug: { $in: userDetails.wishlist } });
+
+        res.status(200).json({ ...userDetails.toObject(), wishlist: cafes }); // Return user details with populated wishlist
+    } catch (err) {
+        next(err); // Pass the error to the error handling middleware
+    }
+});
+
+// PUT: Add a cafe to user's wishlist
+router.put('/:id/wishlist', async (req, res) => {
+  const { id } = req.params; // User's Google ID
+  const { urlSlug } = req.body; // Cafe's urlSlug to be added
+
+  try {
+    // Find the user by Google ID
+    const user = await User.findOne({ googleId: id });
+    if (!user) {
+      return res.status(404).json({ message: 'User  not found' });
+    }
+
+    // Check if the cafe is already in the wishlist
+    if (user.wishlist.includes(urlSlug)) {
+      return res.status(400).json({ message: 'Cafe already in wishlist' });
+    }
+
+    // Add the urlSlug to the wishlist
+    user.wishlist.push(urlSlug);
+    await user.save(); // Save the updated user
+
+    res.status(200).json({ message: 'Cafe added to wishlist', wishlist: user.wishlist });
+  } catch (error) {
+    console.error('Error adding cafe to wishlist:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
+
+{/*
 // GET: Retrieve user's wishlist
 router.get('/wishlist/:userId', async (req, res) => {
   const { userId } = req.params;
@@ -65,29 +113,6 @@ router.get('/wishlist/:userId', async (req, res) => {
   }
 });
 
-
-
-// Get user by Google ID and return their wishlist
-router.get("/:id", async (req, res, next) => {
-    const googleId = req.params.id; // Access the specific parameter 'id'
-
-    try {
-        const userDetails = await User.findOne({ googleId: googleId });
-        if (!userDetails) {
-            return res.status(404).json({ message: "User  not found" }); // Handle not found case
-        }
-
-        // Fetch cafes based on the urlSlugs in the user's wishlist
-        const cafes = await Cafe.find({ urlSlug: { $in: userDetails.wishlist } });
-
-        res.status(200).json({ ...userDetails.toObject(), wishlist: cafes }); // Return user details with populated wishlist
-    } catch (err) {
-        next(err); // Pass the error to the error handling middleware
-    }
-});
-
-
-{/*
 router.get('/:id', async (req, res) => {
     const userGoogleId = req.params.id; // This is the internal ID
     try {
