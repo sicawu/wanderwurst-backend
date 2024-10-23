@@ -27,12 +27,10 @@ const userSchema = new Schema(
       type: Date,
       default: Date.now,
     },
-    wishlist: [
-      {
-        type: Schema.Types.ObjectId,
-        ref: "Cafe",
-      },
-    ],
+    wishlist: [{ 
+      type: String, 
+      ref: 'Cafe'  // Ref to Cafe model
+    }], 
   },
 );
 
