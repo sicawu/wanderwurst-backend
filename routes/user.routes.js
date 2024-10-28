@@ -91,6 +91,33 @@ router.put('/:id/wishlist', async (req, res) => {
   }
 });
 
+// DELETE: Remove a cafe from user's wishlist
+router.delete('/:id/wishlist', async (req, res) => {
+  const { id } = req.params; // User's Google ID
+  const { urlSlug } = req.body; // Cafe's urlSlug to be removed
+
+  try {
+    // Find the user by Google ID
+    const user = await User.findOne({ googleId: id });
+    if (!user) {
+      return res.status(404).json({ message: 'User  not found' });
+    }
+
+    // Check if the cafe is in the wishlist
+    if (!user.wishlist.includes(urlSlug)) {
+      return res.status(400).json({ message: 'Cafe not found in wishlist' });
+    }
+
+    // Remove the urlSlug from the wishlist
+    user.wishlist = user.wishlist.filter(item => item !== urlSlug);
+    await user.save(); // Save the updated user
+
+    res.status(200).json({ message: 'Cafe removed from wishlist', wishlist: user.wishlist });
+  } catch (error) {
+    console.error('Error removing cafe from wishlist:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
 
 {/*
 // GET: Retrieve user's wishlist
