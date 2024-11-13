@@ -16,6 +16,10 @@ const userSchema = new Schema(
       unique: true, 
       sparse: true, // Allows null values, so it won't affect uniqueness of other fields
     },
+    publicId: {
+      type: String,
+      unique: true, 
+    },
     picture: {
       type: String,
     },

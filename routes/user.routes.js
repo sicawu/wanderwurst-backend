@@ -15,9 +15,12 @@ router.post("/register", async (req, res, next) => {
       return res.status(400).json({ message: "User  already exists." });
     }
 
+    // Generate the publicId
+    const publicId = `${name.toLowerCase()}${googleId.slice(-5)}`;
+
     // Create a new user
-    const newUser = await User.create({ email, name, googleId, picture });
-    const user = { email: newUser.email, name: newUser.name };
+    const newUser = await User.create({ email, name, googleId, picture, publicId });
+    const user = { email: newUser.email, name: newUser.name, publicId: newUser.publicId };
 
     // Send a response with the user object
     res.status(201).json({ user });
@@ -89,10 +92,10 @@ router.get("/:id", async (req, res, next) => {
 });
 
 // Get user by ID and return their public wishlist
-router.get("/user/:id", async (req, res, next) => {
-  const googleId = req.params.id; // Access the specific parameter 'id'
+router.get("/public/:id", async (req, res, next) => {
+  const publicId = req.params.publicId; // Access the specific parameter 'id'
   try {
-    const userDetails = await User.findOne({ googleId: googleId });
+    const userDetails = await User.findOne({ publicId: publicId });
     if (!userDetails) {
       return res.status(404).json({ message: "User  not found" }); // Handle not found case
     }
@@ -102,6 +105,7 @@ router.get("/user/:id", async (req, res, next) => {
     // Create a response object excluding sensitive information
     const publicProfileResponse = {
       name: userDetails.name,
+      publicId: userDetails.publicId,
       wishlist: cafes,
     };
 
