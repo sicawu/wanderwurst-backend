@@ -118,6 +118,10 @@ const cafeSchema = new Schema({
   }],
   metaTitle: String,
   metaDescription: String,
+  favorite: {
+    type: Boolean,
+    default: false,
+  },
   /*reviews: [
     {
       type: Schema.Types.ObjectId,

@@ -130,7 +130,7 @@ router.get("/cafes/city/:city", (req, res, next) => {
     "location.city": new RegExp(`^${formattedCity}$`, 'i')
   }
 
-   Cafe.find(cityQuery)
+  Cafe.find(cityQuery)
     .then((cafes) => {
       if (cafes.length === 0) {
         return res.status(404).json({ message: "No cafes found for this city with the selected specs" });
@@ -139,6 +139,35 @@ router.get("/cafes/city/:city", (req, res, next) => {
     })
     .catch((err) => next(err));
 })
+
+// READ - LIST OF FAVORITES FOR ONE SPECIFIC ONE CITY
+router.get("/cafes/city/:city/favorites", async (req, res, next) => {
+  try {
+    // Normalize the city name: replace hyphens with spaces and convert to lowercase
+    const formattedCity = req.params.city.replace(/-/g, ' ').toLowerCase();
+    console.log("Looking for favorites in city:", formattedCity);
+
+    const cityQuery = {
+      "location.city": new RegExp(`^${formattedCity}$`, 'i'),
+      favorite: true
+    };
+
+    // Use await since we're in an async function
+    const cafes = await Cafe.find(cityQuery);
+    
+    // Now we can log the results
+    console.log("Found cafes:", cafes.length);
+
+    if (cafes.length === 0) {
+      return res.status(404).json({ message: "No favorite cafes found in this city" });
+    }
+    
+    res.status(200).json(cafes);
+
+  } catch (err) {
+    next(err);
+  }
+});
 
 // READ - LIST OF CAFES WITH ONE SPECIFIC PURPOSE/TOPPICK
 router.get("/cafes/for/:toppick", (req, res, next) => {
@@ -158,7 +187,7 @@ router.get("/cafes/for/:toppick", (req, res, next) => {
 
 // READ - LIST OF CAFES WITH ONE SPECIFIC DRINK OPTION
 router.get("/cafes/drinks/:drinks", (req, res, next) => {
-  const formattedDrink = req.params.drinks.replace(/-/g, ' '); 
+  const formattedDrink = req.params.drinks.replace(/-/g, ' ');
   const regexPattern = formattedDrink.replace(/\s+/g, '[\\s-]*'); // Replace spaces with optional hyphen or space
   Cafe.find({ drinks: { $regex: regexPattern, $options: 'i' } })
     .then((cafes) => {
@@ -169,12 +198,12 @@ router.get("/cafes/drinks/:drinks", (req, res, next) => {
     })
     .catch((err) => {
       next(err);
-    }); 
-}) 
+    });
+})
 
 // READ - LIST OF CAFES WITH ONE SPECIFIC FOOD OPTION
 router.get("/cafes/food/:food", (req, res, next) => {
-  const formattedFood = req.params.food.replace(/-/g, ' '); 
+  const formattedFood = req.params.food.replace(/-/g, ' ');
   const regexPattern = formattedFood.replace(/\s+/g, '[\\s-]*'); // Replace spaces with optional hyphen or space
   Cafe.find({ food: { $regex: regexPattern, $options: 'i' } })
     .then((cafes) => {
@@ -245,7 +274,7 @@ router.get("/drinks", (req, res, next) => {
 
 // READ - GET ALL EXISTING CAFES WHERE HUNGRY IS TRUE
 router.get("/hungry", (req, res, next) => {
-  Cafe.find({ hungry : true })
+  Cafe.find({ hungry: true })
     .then((cafes) => {
       if (cafes.length === 0) {
         console.log('Found cafes:', cafes);
