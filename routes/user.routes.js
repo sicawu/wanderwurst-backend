@@ -212,7 +212,7 @@ router.delete('/:googleId', async (req, res) => {
 });
 
 
-{/*
+
 // GET: Retrieve user's wishlist
 router.get('/wishlist/:userId', async (req, res) => {
   const { userId } = req.params;
@@ -251,6 +251,6 @@ router.get('/:id', async (req, res) => {
 
 
 
-*/}
+
 
 module.exports = router;
