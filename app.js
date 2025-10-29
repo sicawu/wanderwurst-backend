@@ -31,6 +31,7 @@ app.use("/auth", require("./routes/auth.routes"))
 app.use("/user", require("./routes/user.routes"))
 app.use("/", require("./routes/cafe.routes"))
 app.use("/", require("./routes/review.routes"))
+app.use("/", require("./routes/contact.routes"))
 
 // ERROR HANDLING
 require("./error-handling")(app)
