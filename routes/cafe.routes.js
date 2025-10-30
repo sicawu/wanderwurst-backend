@@ -311,6 +311,45 @@ router.get('/cafe-opening-hours/:placeId', async (req, res) => {
   }
 })
 
+// READ - REFRESH GOOGLE RATINGS FOR ALL CAFES (MANUAL CACHE UPDATE)
+router.get("/refresh-google-ratings", async (req, res, next) => {
+  try {
+    const cafes = await Cafe.find({ placeId: { $exists: true, $ne: "" } });
+    if (cafes.length === 0) {
+      return res.status(404).json({ message: "No cafes found with Google Place IDs" });
+    }
+
+    let updatedCount = 0;
+
+    for (const cafe of cafes) {
+      try {
+        const response = await axios.get(
+          `https://maps.googleapis.com/maps/api/place/details/json?place_id=${cafe.placeId}&fields=rating&key=${GOOGLE_API_KEY_2}`
+        );
+
+        const rating = response.data.result?.rating;
+
+        if (rating) {
+          cafe.googleRating = rating; // Store or update the rating in DB
+          await cafe.save();
+          updatedCount++;
+        }
+      } catch (error) {
+        console.error(`Error updating rating for cafe ${cafe.title}:`, error.message);
+      }
+    }
+
+    res.status(200).json({
+      message: `Google ratings updated successfully`,
+      totalCafes: cafes.length,
+      updated: updatedCount
+    });
+  } catch (err) {
+    console.error("Error refreshing Google ratings:", err);
+    next(err);
+  }
+});
+
 //UPDATE - USER NEEDS TO BE LOGGED IN
 router.put("/cafes/:cafeId", isAuthenticated, (req, res, next) => {
   Cafe.findByIdAndUpdate(req.params.cafeId, req.body, { new: true })

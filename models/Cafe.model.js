@@ -34,6 +34,11 @@ const cafeSchema = new Schema({
   placeId: {
     type: String
   },
+  googleRating: {
+    type: Number,
+    min: 0,
+    max: 5
+  },
   specs: {
     type: [String],
     enum: [
