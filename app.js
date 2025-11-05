@@ -1,6 +1,6 @@
 const cors = require("cors")
 const logger = require("morgan")
-
+const mongoose = require("mongoose")
 
 const originUrl = process.env.ORIGIN || "http://localhost:5173"
 // Access to environment variables/settings
