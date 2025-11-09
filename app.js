@@ -3,6 +3,7 @@ const logger = require("morgan")
 const mongoose = require("mongoose")
 
 const originUrl = process.env.ORIGIN || "http://localhost:5173"
+
 // Access to environment variables/settings
 require("dotenv").config()
 
@@ -15,11 +16,26 @@ const app = express();
 app.use(express.json());
 
 // CORS Setup - To allow requests from Frontend
+const allowedOrigins = [
+  process.env.ORIGIN,
+  "http://localhost:5173"
+];
+
 app.use(
   cors({
-    origin: [originUrl],
+    origin: function (origin, callback) {
+      // allow requests with no origin (like mobile apps, curl, Postman)
+      if (!origin || allowedOrigins.includes(origin)) {
+        callback(null, true);
+      } else {
+        console.warn("❌ CORS blocked for origin:", origin);
+        callback(new Error("Not allowed by CORS"));
+      }
+    },
+    credentials: true,
   })
 );
+
 
 app.use(logger("dev"))
 // This function is getting exported from the config folder. Runs most pieces of middleware

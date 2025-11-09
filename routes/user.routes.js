@@ -91,29 +91,29 @@ router.get("/:id", async (req, res, next) => {
   }
 });
 
-// Get user by ID and return their public wishlist
+// Get user by public ID and return their public wishlist
 router.get("/public/:id", async (req, res, next) => {
-  const publicId = req.params.publicId; // Access the specific parameter 'id'
+  const publicId = req.params.id; // ✅ FIXED
   try {
-    const userDetails = await User.findOne({ publicId: publicId });
+    const userDetails = await User.findOne({ publicId });
     if (!userDetails) {
-      return res.status(404).json({ message: "User  not found" }); // Handle not found case
+      return res.status(404).json({ message: "User not found" });
     }
-    // Fetch cafes based on the urlSlugs in the user's wishlist
+
     const cafes = await Cafe.find({ urlSlug: { $in: userDetails.wishlist } });
 
-    // Create a response object excluding sensitive information
     const publicProfileResponse = {
       name: userDetails.name,
       publicId: userDetails.publicId,
       wishlist: cafes,
     };
 
-    res.status(200).json(publicProfileResponse); // Return public profile data with wishlist
+    res.status(200).json(publicProfileResponse);
   } catch (err) {
-    next(err); // Pass the error to the error handling middleware
+    next(err);
   }
 });
+
 
 
 // PUT: Add a cafe to user's wishlist
