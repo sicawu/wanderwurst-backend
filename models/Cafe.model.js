@@ -56,7 +56,8 @@ const cafeSchema = new Schema({
       "Selling Local Crafts",
       "Selling Organic Food",
       "Kids High Chairs available",
-      "Dog-friendly"
+      "Dog-friendly",
+      "Easy Accessibility"
     ]
   },
   food: {
